@@ -6,19 +6,19 @@ import com.api.mail.entities.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class InboxWrapper {
-	@JsonProperty
+	@JsonProperty ("Nombre del Remitente: ")
 	private String remittentName;
-	@JsonProperty
+	@JsonProperty ("Mail del remitente: ")
 	private String remittentMail;
-	@JsonProperty
+	@JsonProperty ("Apellido del Remitente: ")
 	private String remittentSurname;
-	@JsonProperty
+	@JsonProperty ("Hora enviado: ")
 	private Timestamp time;
-	@JsonProperty
+	@JsonProperty ("Mail del Receptor: ")
 	private String reciberMail;
-	@JsonProperty
+	@JsonProperty ("Asunto: ")
 	private String topic;
-	@JsonProperty
+	@JsonProperty ("Mensaje: ")
 	private String message;
 	
 	public void setTopic(String topic) {

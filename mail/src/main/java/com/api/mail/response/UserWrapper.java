@@ -3,23 +3,23 @@ package com.api.mail.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserWrapper {
-	@JsonProperty
+	@JsonProperty ("Nombre: ")
 	private String name;
-	@JsonProperty
+	@JsonProperty ("Apellido: ")
 	private String surname;
-	@JsonProperty
+	@JsonProperty ("Direccion: ")
 	private String adress;
-	@JsonProperty
+	@JsonProperty ("Celular: ")
 	private int phone;
-	@JsonProperty
+	@JsonProperty ("Ciudad: ")
 	private String city;
-	@JsonProperty
+	@JsonProperty ("Pais: ")
 	private String contry;
-	@JsonProperty
+	@JsonProperty ("Mail: ")
 	private String mail;
-	@JsonProperty
+	@JsonProperty ("Contraseña: ")
 	private String pwd;
-	@JsonProperty
+	@JsonProperty ("ID: ")
 	private int id;
 	
 	public void setName(String name) {

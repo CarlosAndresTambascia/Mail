@@ -17,6 +17,7 @@ import com.api.mail.request.MessageRequest;
 import com.api.mail.response.InboxWrapper;
 import com.api.mail.response.MessageWrapper;
 import com.google.common.collect.Lists;
+import com.api.mail.converter.InboxConverter;
 import com.api.mail.converter.MessageConverter;
 
 @RestController
@@ -26,7 +27,8 @@ public class MessageController {
 	private MessageConverter messageConverter;
 	@Autowired
 	private MessageRepository messageRepository;
-
+	@Autowired
+	private InboxConverter inboxConverter;
 	// CREAR MENSAJE
 	@RequestMapping(value = "/send", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity insertUser(@RequestBody MessageRequest r) {
@@ -47,11 +49,10 @@ public class MessageController {
 	// DAME TODOS
 	@RequestMapping(value = "/inbox", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<List<InboxWrapper>> getAllMessages() {
-//acomodar esta parteeeee!!!!!!!!!
 		Iterable<Message> it = messageRepository.findAll();
 		List<Message> list = Lists.newArrayList(it);
 		if (list.size() > 0) {
-			return new ResponseEntity<>(this.convertList(list), HttpStatus.OK);
+			return new ResponseEntity<>(this.convertListInbox(list), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
@@ -73,6 +74,14 @@ public class MessageController {
 		List<MessageWrapper> list = new ArrayList<>();
 		for (Message m : message) {
 			list.add(messageConverter.convert(m));
+		}
+		return list;
+	}	
+	
+	private List<InboxWrapper> convertListInbox(List<Message> message) {
+		List<InboxWrapper> list = new ArrayList<>();
+		for (Message m : message) {
+			list.add(inboxConverter.convert(m));
 		}
 		return list;
 	}
