@@ -48,6 +48,7 @@ public class UserControllerTest {
 		this.sessionId = this.sessionData.addSession(user);
 
 	}
+	/*
 
 	@Test
 	public void getAllUsersOkTest() throws Exception {
@@ -74,7 +75,7 @@ public class UserControllerTest {
 		).andExpect(status().isNoContent());
 		//.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
 	}
-
+*//*
 	@Test
 	public void insertUserOkTest() throws Exception {
 		URL url = Resources.getResource("user.json");
@@ -82,7 +83,8 @@ public class UserControllerTest {
 
 		mockMvc.perform(post("/api/user/").contentType(MediaType.APPLICATION_JSON_UTF8).content(json))
 				.andExpect(status().isCreated());
-	}/*
+	}
+	*//*
 		 * @Test public void insertUserBadTest() throws Exception { URL url =
 		 * Resources.getResource("user.json"); String json =
 		 * Resources.toString(url, Charsets.UTF_8);
