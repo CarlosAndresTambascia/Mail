@@ -55,7 +55,9 @@ public class UserControllerTest {
 
 		mockMvc.perform(
 
-				get("/api/user/").header("sessionId", this.sessionId)
+				get("/api/user/")
+				.header("sessionId", this.sessionId)
+				.header("user", this.user.getName())
 
 		)
 
@@ -66,10 +68,11 @@ public class UserControllerTest {
 	@Test
 	public void getAllUsersBadTest() throws Exception {
 		mockMvc.perform(
-
 				get("/api/user/").header("sessionId", this.sessionId)
+				.header("user", this.user.getName())
 
 		).andExpect(status().isNoContent());
+		//.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
 	}
 
 	@Test
