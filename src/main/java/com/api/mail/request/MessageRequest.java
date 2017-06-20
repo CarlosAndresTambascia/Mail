@@ -17,7 +17,7 @@ public class MessageRequest {
 	private String message;
 	@JsonProperty
 	private Timestamp time;
-	
+
 	public Timestamp getTime() {
 		return time;
 	}

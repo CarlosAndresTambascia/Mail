@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,6 @@ import com.api.mail.persistence.UserRepository;
 import com.api.mail.request.MessageRequest;
 import com.api.mail.response.InboxWrapper;
 import com.api.mail.response.MessageWrapper;
-import com.google.common.collect.Lists;
 import com.api.mail.converter.InboxConverter;
 import com.api.mail.converter.MessageConverter;
 
@@ -31,10 +31,12 @@ public class MessageController {
 	@Autowired
 	private MessageRepository messageRepository;
 	@Autowired
-	  private UserRepository userRepository;
+	private UserRepository userRepository;
 	@Autowired
 	private InboxConverter inboxConverter;
+
 	// CREAR MENSAJE
+	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity insertUser(@RequestBody MessageRequest r) {
 		try {
@@ -53,51 +55,94 @@ public class MessageController {
 
 	// INBOX
 	@RequestMapping(value = "/inbox", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<List<InboxWrapper>> getAllMessagesInbox(@RequestHeader("usuario") String userName) {
+	public @ResponseBody ResponseEntity<List<InboxWrapper>> getAllMessagesInbox(
+			@RequestHeader("usuario") String userName) {
 		User u = userRepository.findByName(userName);
 		List<Message> list = messageRepository.findByReciver(u);
-	
-		if (list.size() > 0) {
-			return new ResponseEntity<>(this.convertListInbox(list), HttpStatus.OK);
+		List<Message> listNotDeleted = new ArrayList<>();
+		//almaceno en una lista auxiliar donde trabajo con los mensajes que no fueron borrados ya que necesito los mensajes borrados para poder hacer el /trash
+		int i;
+		for( i=0; i<list.size();i++){
+			if(!list.get(i).getDeleted()){
+				Message message = list.get(i);
+				listNotDeleted.add(message);
+			}
+		}
+		if (listNotDeleted.size() > 0) {
+			return new ResponseEntity<>(this.convertListInbox(listNotDeleted), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 	}
-	
-	//OUTBOX
+
+	// OUTBOX
 	@RequestMapping(value = "/outbox", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<List<InboxWrapper>> getAllMessagesOutbox(@RequestHeader("usuario") String userName) {
+	public @ResponseBody ResponseEntity<List<InboxWrapper>> getAllMessagesOutbox(
+			@RequestHeader("usuario") String userName) {
 		User u = userRepository.findByName(userName);
 		List<Message> list = messageRepository.findByRemittent(u);
-		 
-	
-		if (list.size() > 0) {
-			return new ResponseEntity<>(this.convertListInbox(list), HttpStatus.OK);
+		List<Message> listNotDeleted = new ArrayList<>();
+		//almaceno en una lista auxiliar donde trabajo con los mensajes que no fueron borrados ya que necesito los mensajes borrados para poder hacer el /trash
+		int i;
+		for( i=0; i<list.size();i++){
+			if(!list.get(i).getDeleted()){
+				Message message = list.get(i);
+				listNotDeleted.add(message);
+			}
+		}
+		if (listNotDeleted.size() > 0) {
+			return new ResponseEntity<>(this.convertListInbox(listNotDeleted), HttpStatus.OK);
 		} else {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 	}
 	// BORRAR MENSAJE
-
-	@RequestMapping(value = "/", method = RequestMethod.DELETE)
-	public ResponseEntity dropUser(@RequestBody int id) {
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity dropMessage(@PathVariable("id") int id) {
 		try {
-			messageRepository.delete((long) id);
+			//modifico una variable deleted ya qae si borro el mensaje no tengo forma de traerme los mensajes borrados
+			Message message = messageRepository.findOne((long) id);
+			message.setDeleted(true);
+			//debo almacenar el mensaje guardado para poder mostrarlo en la el /trash pedido
+			messageRepository.save(message);
 			return new ResponseEntity(HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
+	
+	@RequestMapping(value = "/trash", method = RequestMethod.DELETE)
+	public @ResponseBody ResponseEntity<List<InboxWrapper>> trash(
+			@RequestHeader("usuario") String userName) {
+		User u = userRepository.findByName(userName);
+		List<Message> list = messageRepository.findByRemittent(u);
+		List<Message> listDeleted = new ArrayList<>();
+		//almaceno en una lista auxiliar donde trabajo con los mensajes que no fueron borrados ya que necesito los mensajes borrados para poder hacer el /trash
+		int i;
+		for( i=0; i<list.size();i++){
+			if(list.get(i).getDeleted()){
+				Message message = list.get(i);
+				listDeleted.add(message);
+			}
+		}
+		if (listDeleted.size() > 0) {
+			return new ResponseEntity<>(this.convertListInbox(listDeleted), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+	}
 
+	@SuppressWarnings("unused")
 	private List<MessageWrapper> convertList(List<Message> message) {
 		List<MessageWrapper> list = new ArrayList<>();
 		for (Message m : message) {
 			list.add(messageConverter.convert(m));
 		}
 		return list;
-	}	
-	
+	}
+
 	private List<InboxWrapper> convertListInbox(List<Message> message) {
 		List<InboxWrapper> list = new ArrayList<>();
 		for (Message m : message) {

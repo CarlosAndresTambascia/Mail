@@ -3,6 +3,7 @@ package com.api.mail.entities;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,18 +15,19 @@ import javax.persistence.Table;
 @Table(name = "Message")
 public class Message {
 	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	@OneToOne
 	private User remittent;
 	@OneToOne
 	private User reciver;
 	private String topic;
-	private String message;	
+	private String message;
 	private Date time;
-	
-	public Message(){
-		
+	private boolean deleted;
+
+	public Message() {
+		this.deleted = false;
 	}
 
 	public Message(User remittent, User reciver, String topic, String message, Timestamp time) {
@@ -35,6 +37,7 @@ public class Message {
 		this.topic = topic;
 		this.message = message;
 		this.time = time;
+		this.deleted = false;
 	}
 
 	public Message(int id, User remittent, User reciver, String topic, String message, Timestamp time) {
@@ -45,6 +48,7 @@ public class Message {
 		this.message = message;
 		this.id = id;
 		this.time = time;
+		this.deleted = false;
 	}
 
 	public Date getTime() {
@@ -93,6 +97,14 @@ public class Message {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+	@Column(nullable = true)
+	public boolean getDeleted(){
+		return deleted;
+	}
+	public void setDeleted(boolean deleted){
+		this.deleted = deleted;
+		
 	}
 
 }

@@ -18,9 +18,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.api.mail.util.SessionData;
 import com.api.mail.util.AuthenticationData;
 
-
 @Service
-public class AuthFilter extends OncePerRequestFilter{
+public class AuthFilter extends OncePerRequestFilter {
 	@Autowired
 	SessionData sessionData;
 
@@ -45,6 +44,7 @@ public class AuthFilter extends OncePerRequestFilter{
 		}
 
 		private Map<String, String> headerMap = new HashMap<String, String>();
+
 		public void addHeader(String name, String value) {
 			headerMap.put(name, value);
 		}
@@ -57,6 +57,7 @@ public class AuthFilter extends OncePerRequestFilter{
 			}
 			return headerValue;
 		}
+
 		@Override
 		public Enumeration<String> getHeaderNames() {
 			List<String> names = Collections.list(super.getHeaderNames());

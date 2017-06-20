@@ -9,14 +9,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SuppressWarnings("deprecation")
 @SpringBootApplication
 @EnableScheduling
-public class Main extends SpringBootServletInitializer
-{
-    public static void main( String[] args )
-    {
-    	 SpringApplication.run(Main.class, args);
-    }
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-      return application.sources(Main.class);
-    }
+public class Main extends SpringBootServletInitializer {
+	public static void main(String[] args) {
+		SpringApplication.run(Main.class, args);
+	}
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(Main.class);
+	}
 }

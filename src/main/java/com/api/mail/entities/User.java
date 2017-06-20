@@ -12,7 +12,7 @@ import javax.persistence.Table;
 public class User {
 
 	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	private String name;
 	private String surname;
@@ -23,7 +23,6 @@ public class User {
 	private String mail;
 	private String pwd;
 
-	
 	public User() {
 
 	}
@@ -54,11 +53,12 @@ public class User {
 		this.pwd = pwd;
 		this.id = id;
 	}
-	
+
 	@Column(nullable = false, length = 20, unique = true)
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -110,7 +110,7 @@ public class User {
 	public void setMail(String mail) {
 		this.mail = mail;
 	}
-
+	@Column(nullable = false, length = 20)
 	public String getPwd() {
 		return pwd;
 	}
@@ -157,7 +157,5 @@ public class User {
 			return false;
 		return true;
 	}
-
-	
 
 }

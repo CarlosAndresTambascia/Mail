@@ -4,10 +4,11 @@ import com.api.mail.entities.Message;
 import com.api.mail.response.InboxWrapper;
 
 public class InboxConverter {
-	public InboxConverter(){
-		
+	public InboxConverter() {
+
 	}
-	public InboxWrapper convert (Message message){
+
+	public InboxWrapper convert(Message message) {
 		InboxWrapper i = new InboxWrapper();
 		i.setMessage(message.getMessage());
 		i.setReciberMail(message.getReciver());
@@ -17,6 +18,6 @@ public class InboxConverter {
 		i.setTime(message.getTime());
 		i.setTopic(message.getTopic());
 		return i;
-		
+
 	}
 }

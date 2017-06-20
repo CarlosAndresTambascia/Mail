@@ -15,50 +15,48 @@ import com.api.mail.entities.User;
 @Service
 public class SessionData {
 	final static Logger logger = Logger.getLogger(SessionData.class);
-    HashMap<String, AuthenticationData> sessionData;
+	HashMap<String, AuthenticationData> sessionData;
 
-    @Value("${session.expiration}")
-    int expirationTime;
+	@Value("${session.expiration}")
+	int expirationTime;
 
+	public SessionData() {
+		this.sessionData = new HashMap<String, AuthenticationData>();
+	}
 
-    public SessionData() {
-        this.sessionData = new HashMap<String, AuthenticationData>();
-    }
+	public String addSession(User usuario) {
+		String sessionId = UUID.randomUUID().toString();
+		AuthenticationData aData = new AuthenticationData();
+		aData.setUsuario(usuario);
+		aData.setLastAction(new DateTime());
+		this.sessionData.put(sessionId, aData);
+		return sessionId;
+	}
 
-    public String addSession(User usuario) {
-        String sessionId = UUID.randomUUID().toString();
-        AuthenticationData aData = new AuthenticationData();
-        aData.setUsuario(usuario);
-        aData.setLastAction(new DateTime());
-        this.sessionData.put(sessionId, aData);
-        return sessionId;
-    }
+	public void removeSession(String sessionId) {
+		sessionData.remove(sessionId);
+	}
 
+	public AuthenticationData getSession(String sessionId) {
+		AuthenticationData aData = this.sessionData.get(sessionId);
+		if (aData != null) {
+			return aData;
+		} else {
+			return null;
+		}
+	}
 
-    public void removeSession(String sessionId) {
-        sessionData.remove(sessionId);
-    }
-
-    public AuthenticationData getSession(String sessionId) {
-        AuthenticationData aData = this.sessionData.get(sessionId);
-        if (aData != null) {
-                return aData;
-        } else {
-            return null;
-        }
-    }
-
-    @Scheduled(fixedRate = 9995000)
-    public void checkSessions() {
-        //System.out.println("Checking sessions");
-        Set<String> sessionsId = this.sessionData.keySet();
-        for (String sessionId : sessionsId) {
-            AuthenticationData aData = this.sessionData.get(sessionId);
-            if (aData.getLastAction().plusSeconds(expirationTime).isBefore(System.currentTimeMillis())) {
-                System.out.println("Deleting sessionId = " + sessionId);
-                this.sessionData.remove(sessionId);
-            }
-        }
-    }
+	@Scheduled(fixedRate = 9995000)
+	public void checkSessions() {
+		// System.out.println("Checking sessions");
+		Set<String> sessionsId = this.sessionData.keySet();
+		for (String sessionId : sessionsId) {
+			AuthenticationData aData = this.sessionData.get(sessionId);
+			if (aData.getLastAction().plusSeconds(expirationTime).isBefore(System.currentTimeMillis())) {
+				System.out.println("Deleting sessionId = " + sessionId);
+				this.sessionData.remove(sessionId);
+			}
+		}
+	}
 
 }

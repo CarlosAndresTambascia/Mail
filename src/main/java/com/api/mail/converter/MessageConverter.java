@@ -7,18 +7,18 @@ import com.api.mail.response.MessageWrapper;
 
 @Component
 public class MessageConverter {
-	public MessageConverter(){
-		
+	public MessageConverter() {
+
 	}
-	public MessageWrapper convert (Message message){
+
+	public MessageWrapper convert(Message message) {
 		MessageWrapper m = new MessageWrapper();
 		m.setId(message.getId());
 		m.setMessage(message.getMessage());
 		m.setReciver(message.getReciver());
 		m.setRemittent(message.getRemittent());
 		m.setTopic(message.getTopic());
-		return m;		
+		return m;
 	}
-	
 
 }
