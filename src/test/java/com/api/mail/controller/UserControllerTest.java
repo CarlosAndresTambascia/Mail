@@ -5,10 +5,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import java.net.URL;
-import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -80,28 +80,35 @@ public class UserControllerTest {
 		mockMvc.perform(post("/api/user/").contentType(MediaType.APPLICATION_JSON_UTF8).content(json))
 				.andExpect(status().isCreated());
 	}/*
-	@Test
-	public void insertUserBadTest() throws Exception {
-		URL url = Resources.getResource("user.json");
-		String json = Resources.toString(url, Charsets.UTF_8);
+		 * @Test public void insertUserBadTest() throws Exception { URL url =
+		 * Resources.getResource("user.json"); String json =
+		 * Resources.toString(url, Charsets.UTF_8);
+		 * 
+		 * mockMvc.perform(post("/api/user/").contentType(MediaType.
+		 * APPLICATION_JSON_UTF8).content(json))
+		 * .andExpect(status().isInternalServerError()); }
+		 */
 
-		mockMvc.perform(post("/api/user/").contentType(MediaType.APPLICATION_JSON_UTF8).content(json))
-				.andExpect(status().isInternalServerError());
-	}
-*/
 	@Test
-	public void getByName() throws Exception {
+	public void getByNameTest() throws Exception {
 		this.user = userRepository.save(user);
 
 		mockMvc.perform(get("/api/user/carlos").header("sessionid", this.sessionId).header("user", this.user.getName()))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
 	}
+
 	@Test
-	public void getByNameBad() throws Exception {
-		
+	public void getByNameBadTest() throws Exception {
+
 		mockMvc.perform(get("/api/user/carlos").header("sessionid", this.sessionId).header("user", this.user.getName()))
 				.andExpect(status().isNotFound());
 	}
-	
+
+	@Test
+	public void dropUserOkTest() throws Exception {
+
+		mockMvc.perform(get("/api/user/carlos").header("sessionid", this.sessionId).header("user", this.user.getName()))
+				.andExpect(status().isNotFound());
+	}
 
 }
