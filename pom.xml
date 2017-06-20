@@ -20,20 +20,52 @@
 
 
 	<build>
-		<plugins>
-			<!--<plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>exec-maven-plugin</artifactId> 
-				<version>1.1.1</version> <executions> <execution> <goals> <goal>exec</goal> 
-				</goals> <configuration> <mainClass>com.utn.progav2.App</mainClass> </configuration> 
-				</execution> </executions> </plugin> -->
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<jvmArguments> -Xdebug
-						-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=12345</jvmArguments>
-				</configuration>
-			</plugin>
-		</plugins>
+		 <plugins>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>
+                        -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005
+                    </jvmArguments>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.9</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <formats>
+                        <format>html</format>
+                        <format>xml</format>
+                    </formats>
+                    <check/>
+                </configuration>
+            </plugin>-->
+
+        </plugins>
 	</build>
 <dependencies>
 
