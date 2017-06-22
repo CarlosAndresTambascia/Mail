@@ -1,8 +1,6 @@
 package com.api.mail.entities;
 
-import java.sql.Timestamp;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.CascadeType;
 
 @Entity
 @Table(name = "Message")
@@ -17,9 +16,9 @@ public class Message {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.PERSIST)
 	private User remittent;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.PERSIST)
 	private User reciver;
 	private String topic;
 	private String message;
@@ -30,7 +29,7 @@ public class Message {
 		this.deleted = false;
 	}
 
-	public Message(User remittent, User reciver, String topic, String message, Timestamp time) {
+	public Message(User remittent, User reciver, String topic, String message, Date time) {
 		super();
 		this.remittent = remittent;
 		this.reciver = reciver;
@@ -40,7 +39,7 @@ public class Message {
 		this.deleted = false;
 	}
 
-	public Message(int id, User remittent, User reciver, String topic, String message, Timestamp time) {
+	public Message(int id, User remittent, User reciver, String topic, String message, Date time) {
 		super();
 		this.remittent = remittent;
 		this.reciver = reciver;
@@ -98,13 +97,15 @@ public class Message {
 	public void setId(int id) {
 		this.id = id;
 	}
+
 	@Column(nullable = true)
-	public boolean getDeleted(){
+	public boolean getDeleted() {
 		return deleted;
 	}
-	public void setDeleted(boolean deleted){
+
+	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
-		
+
 	}
 
 }

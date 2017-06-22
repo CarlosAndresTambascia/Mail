@@ -1,8 +1,28 @@
 {
-  "deleted": 1,
-  "message": "hola",
-  "time": "2017-06-09 00:00:00",
-  "topic": "test",
-  "reciver_id": 1,
-  "remittent_id": 2
+	"ID: ": 1,
+	"NombreDelRemitente: ": {
+		"id": 3,
+		"name": "Homero",
+		"surname": "Simpson",
+		"adress": "Colon 5000",
+		"phone": 1234,
+		"city": "Sprinfield",
+		"contry": "EEUU",
+		"mail": "yankee@mail.com",
+		"pwd": "123"
+	},
+	"NombreDelReceptor: ": {
+		"id": 1,
+		"name": "Carlos",
+		"surname": "Tambascia\r\n\r\n",
+		"adress": "Edison 111",
+		"phone": 12345,
+		"city": "Mar del Plata",
+		"contry": "Argentina",
+		"mail": "carlos@mail.com",
+		"pwd": "123"
+	},
+	"Asunto: ": "jlasd",
+	"Mensaje: ": "hoial",
+	"HorMail: ": null
 }

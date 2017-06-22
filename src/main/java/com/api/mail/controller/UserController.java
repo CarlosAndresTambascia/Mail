@@ -61,9 +61,10 @@ public class UserController {
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/{name}", method = RequestMethod.DELETE)
 	public ResponseEntity dropUser(@PathVariable("name") String name) {
-		//no se puede borrar si tiene mensajes asociados. habira que chequear que no tenga msjs 
+		// no se puede borrar si tiene mensajes asociados. habira que chequear
+		// que no tenga msjs
 		try {
-			User u =userRepository.findByName(name);
+			User u = userRepository.findByName(name);
 			userRepository.delete(u);
 			return new ResponseEntity(HttpStatus.OK);
 		} catch (Exception e) {

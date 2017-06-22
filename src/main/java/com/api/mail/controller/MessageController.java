@@ -38,7 +38,7 @@ public class MessageController {
 	// CREAR MENSAJE
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity insertUser(@RequestBody MessageRequest r) {
+	public ResponseEntity insertMessage(@RequestBody MessageRequest r) {
 		try {
 			Message m = new Message();
 			m.setMessage(r.getMessage());
@@ -60,10 +60,12 @@ public class MessageController {
 		User u = userRepository.findByName(userName);
 		List<Message> list = messageRepository.findByReciver(u);
 		List<Message> listNotDeleted = new ArrayList<>();
-		//almaceno en una lista auxiliar donde trabajo con los mensajes que no fueron borrados ya que necesito los mensajes borrados para poder hacer el /trash
+		// almaceno en una lista auxiliar donde trabajo con los mensajes que no
+		// fueron borrados ya que necesito los mensajes borrados para poder
+		// hacer el /trash
 		int i;
-		for( i=0; i<list.size();i++){
-			if(!list.get(i).getDeleted()){
+		for (i = 0; i < list.size(); i++) {
+			if (!list.get(i).getDeleted()) {
 				Message message = list.get(i);
 				listNotDeleted.add(message);
 			}
@@ -82,10 +84,12 @@ public class MessageController {
 		User u = userRepository.findByName(userName);
 		List<Message> list = messageRepository.findByRemittent(u);
 		List<Message> listNotDeleted = new ArrayList<>();
-		//almaceno en una lista auxiliar donde trabajo con los mensajes que no fueron borrados ya que necesito los mensajes borrados para poder hacer el /trash
+		// almaceno en una lista auxiliar donde trabajo con los mensajes que no
+		// fueron borrados ya que necesito los mensajes borrados para poder
+		// hacer el /trash
 		int i;
-		for( i=0; i<list.size();i++){
-			if(!list.get(i).getDeleted()){
+		for (i = 0; i < list.size(); i++) {
+			if (!list.get(i).getDeleted()) {
 				Message message = list.get(i);
 				listNotDeleted.add(message);
 			}
@@ -96,15 +100,18 @@ public class MessageController {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 	}
+
 	// BORRAR MENSAJE
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity dropMessage(@PathVariable("id") int id) {
 		try {
-			//modifico una variable deleted ya qae si borro el mensaje no tengo forma de traerme los mensajes borrados
+			// modifico una variable deleted ya qae si borro el mensaje no tengo
+			// forma de traerme los mensajes borrados
 			Message message = messageRepository.findOne((long) id);
 			message.setDeleted(true);
-			//debo almacenar el mensaje guardado para poder mostrarlo en la el /trash pedido
+			// debo almacenar el mensaje guardado para poder mostrarlo en la el
+			// /trash pedido
 			messageRepository.save(message);
 			return new ResponseEntity(HttpStatus.OK);
 		} catch (Exception e) {
@@ -112,17 +119,18 @@ public class MessageController {
 		}
 
 	}
-	
-	@RequestMapping(value = "/trash", method = RequestMethod.DELETE)
-	public @ResponseBody ResponseEntity<List<InboxWrapper>> trash(
-			@RequestHeader("usuario") String userName) {
+
+	@RequestMapping(value = "/trash", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<List<InboxWrapper>> trash(@RequestHeader("usuario") String userName) {
 		User u = userRepository.findByName(userName);
 		List<Message> list = messageRepository.findByRemittent(u);
 		List<Message> listDeleted = new ArrayList<>();
-		//almaceno en una lista auxiliar donde trabajo con los mensajes que no fueron borrados ya que necesito los mensajes borrados para poder hacer el /trash
+		// almaceno en una lista auxiliar donde trabajo con los mensajes que no
+		// fueron borrados ya que necesito los mensajes borrados para poder
+		// hacer el /trash
 		int i;
-		for( i=0; i<list.size();i++){
-			if(list.get(i).getDeleted()){
+		for (i = 0; i < list.size(); i++) {
+			if (list.get(i).getDeleted()) {
 				Message message = list.get(i);
 				listDeleted.add(message);
 			}

@@ -1,10 +1,13 @@
 package com.api.mail.controller;
 
+import static java.util.Arrays.asList;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import java.net.URL;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,13 +23,12 @@ import com.api.mail.Main;
 import com.api.mail.entities.User;
 import com.api.mail.persistence.UserRepository;
 import com.api.mail.util.SessionData;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Main.class)
 @Transactional
-public class UserControllerTest {
+public class LoginControllerTest {
 
 	private MockMvc mockMvc;
 	@Autowired
@@ -45,71 +47,30 @@ public class UserControllerTest {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
 		this.user = new User("carlos", "tambascia", "edison", 223, "MDP", "Argentina", "charly@mail.com", "123");
 		this.sessionId = this.sessionData.addSession(user);
-
-	}
-
-	@Test
-	public void getAllUsersOkTest() throws Exception {
 		this.user = userRepository.save(user);
 
-		mockMvc.perform(
-
-				get("/api/user/").header("sessionId", this.sessionId)
-
-		)
-
-				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
-
 	}
 
 	@Test
-	public void getAllUsersBadTest() throws Exception {
-		mockMvc.perform(get("/api/user/").header("sessionId", this.sessionId)
-
-		).andExpect(status().isNoContent());
-
-	}
-
-	@Test
-	public void insertUserOkTest() throws Exception {
-		URL url = Resources.getResource("user.json");
-		String json = Resources.toString(url, Charsets.UTF_8);
-
-		mockMvc.perform(post("/api/user/").contentType(MediaType.APPLICATION_JSON_UTF8).content(json))
-				.andExpect(status().isCreated());
-	}
-	/*
-	 * @Test public void insertUserBadTest() throws Exception { URL url =
-	 * Resources.getResource("user.json"); String json = Resources.toString(url,
-	 * Charsets.UTF_8);
-	 * 
-	 * mockMvc.perform(post("/api/user/").contentType(MediaType.
-	 * APPLICATION_JSON_UTF8).content(json))
-	 * .andExpect(status().isInternalServerError()); }
-	 */
-
-	@Test
-	public void getByNameTest() throws Exception {
-		this.user = userRepository.save(user);
-
-		mockMvc.perform(get("/api/user/carlos").header("sessionid", this.sessionId).header("user", this.user.getName()))
+	public void loginSuccess() throws Exception {
+		mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.content(EntityUtils.toString(new UrlEncodedFormEntity(
+						asList(new BasicNameValuePair("user", "carlos"), new BasicNameValuePair("pwd", "123"))))))
 				.andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
 	}
 
 	@Test
-	public void getByNameBadTest() throws Exception {
-
-		mockMvc.perform(get("/api/user/carlos").header("sessionid", this.sessionId).header("user", this.user.getName()))
-				.andExpect(status().isNotFound());
+	public void loginFailUnauthorized() throws Exception {
+		mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+				.content(EntityUtils.toString(new UrlEncodedFormEntity(
+						asList(new BasicNameValuePair("user", "charly"), new BasicNameValuePair("pwd", "111"))))))
+				.andExpect(status().isForbidden());
 	}
 
 	@Test
-	public void dropUserOkTest() throws Exception {
+	public void logoutSuccess() throws Exception {
+		String sessionid = this.sessionData.addSession(this.user);
 
-		mockMvc.perform(get("/api/user/carlos")
-				.header("sessionid", this.sessionId)
-				.header("user", this.user.getName()))
-				.andExpect(status().isNotFound());
+		mockMvc.perform(get("/logout").header("sessionid", sessionid)).andExpect(status().isAccepted());
 	}
-
 }
