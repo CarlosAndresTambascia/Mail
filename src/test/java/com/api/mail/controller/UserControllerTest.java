@@ -1,5 +1,6 @@
 package com.api.mail.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -87,6 +88,7 @@ public class UserControllerTest {
 	 * APPLICATION_JSON_UTF8).content(json))
 	 * .andExpect(status().isInternalServerError()); }
 	 */
+	
 
 	@Test
 	public void getByNameTest() throws Exception {
@@ -105,11 +107,9 @@ public class UserControllerTest {
 
 	@Test
 	public void dropUserOkTest() throws Exception {
-
-		mockMvc.perform(get("/api/user/carlos")
-				.header("sessionid", this.sessionId)
-				.header("user", this.user.getName()))
-				.andExpect(status().isNotFound());
+		this.user = userRepository.save(user);
+		mockMvc.perform(delete("/api/user/carlos").header("sessionid", this.sessionId).header("user", this.user.getName()))
+				.andExpect(status().isOk());
 	}
 
 }

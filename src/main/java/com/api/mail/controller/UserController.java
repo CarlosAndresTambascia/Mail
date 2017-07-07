@@ -8,7 +8,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.api.mail.converter.UserConverter;
+import com.api.mail.entities.Message;
 import com.api.mail.entities.User;
+import com.api.mail.persistence.MessageRepository;
 import com.api.mail.persistence.UserRepository;
 import com.api.mail.request.UserRequest;
 import com.api.mail.response.UserWrapper;
@@ -22,6 +24,9 @@ public class UserController {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private MessageRepository messageRepository;
 
 	// DAME TODOS
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -61,10 +66,13 @@ public class UserController {
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/{name}", method = RequestMethod.DELETE)
 	public ResponseEntity dropUser(@PathVariable("name") String name) {
-		// no se puede borrar si tiene mensajes asociados. habira que chequear
-		// que no tenga msjs
+		//se borra con todos sus mensajes asociados tanto enviados como recibidos 
 		try {
 			User u = userRepository.findByName(name);
+			List<Message> list = messageRepository.findByReciver(u);
+			messageRepository.delete(list);
+			List<Message> listr = messageRepository.findByRemittent(u);
+			messageRepository.delete(listr);
 			userRepository.delete(u);
 			return new ResponseEntity(HttpStatus.OK);
 		} catch (Exception e) {

@@ -8,6 +8,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
+
 import javax.persistence.CascadeType;
 
 @Entity
@@ -15,7 +18,7 @@ import javax.persistence.CascadeType;
 public class Message {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+	private long id;
 	@OneToOne(cascade = CascadeType.PERSIST)
 	private User remittent;
 	@OneToOne(cascade = CascadeType.PERSIST)
@@ -23,7 +26,8 @@ public class Message {
 	private String topic;
 	private String message;
 	private Date time;
-	private boolean deleted;
+	@Type(type = "org.hibernate.type.NumericBooleanType")
+	private Boolean deleted;
 
 	public Message() {
 		this.deleted = false;
@@ -35,17 +39,6 @@ public class Message {
 		this.reciver = reciver;
 		this.topic = topic;
 		this.message = message;
-		this.time = time;
-		this.deleted = false;
-	}
-
-	public Message(int id, User remittent, User reciver, String topic, String message, Date time) {
-		super();
-		this.remittent = remittent;
-		this.reciver = reciver;
-		this.topic = topic;
-		this.message = message;
-		this.id = id;
 		this.time = time;
 		this.deleted = false;
 	}
@@ -90,12 +83,8 @@ public class Message {
 		this.message = message;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	@Column(nullable = true)
@@ -103,7 +92,7 @@ public class Message {
 		return deleted;
 	}
 
-	public void setDeleted(boolean deleted) {
+	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 
 	}

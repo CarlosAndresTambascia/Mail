@@ -24,7 +24,6 @@ import com.api.mail.entities.User;
 import com.api.mail.persistence.UserRepository;
 import com.api.mail.util.SessionData;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Main.class)
 @Transactional

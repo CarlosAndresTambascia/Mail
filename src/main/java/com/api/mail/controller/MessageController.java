@@ -17,23 +17,22 @@ import com.api.mail.entities.Message;
 import com.api.mail.entities.User;
 import com.api.mail.persistence.MessageRepository;
 import com.api.mail.persistence.UserRepository;
+import com.api.mail.request.BorrarMensajeRequest;
 import com.api.mail.request.MessageRequest;
 import com.api.mail.response.InboxWrapper;
-import com.api.mail.response.MessageWrapper;
 import com.api.mail.converter.InboxConverter;
-import com.api.mail.converter.MessageConverter;
 
 @RestController
 @RequestMapping(value = "api/message", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MessageController {
-	@Autowired
-	private MessageConverter messageConverter;
+	
 	@Autowired
 	private MessageRepository messageRepository;
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
 	private InboxConverter inboxConverter;
+	
 
 	// CREAR MENSAJE
 	@SuppressWarnings("rawtypes")
@@ -54,28 +53,29 @@ public class MessageController {
 	}
 
 	// INBOX
-	@RequestMapping(value = "/inbox", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<List<InboxWrapper>> getAllMessagesInbox(
-			@RequestHeader("usuario") String userName) {
-		User u = userRepository.findByName(userName);
-		List<Message> list = messageRepository.findByReciver(u);
-		List<Message> listNotDeleted = new ArrayList<>();
-		// almaceno en una lista auxiliar donde trabajo con los mensajes que no
-		// fueron borrados ya que necesito los mensajes borrados para poder
-		// hacer el /trash
-		int i;
-		for (i = 0; i < list.size(); i++) {
-			if (!list.get(i).getDeleted()) {
-				Message message = list.get(i);
-				listNotDeleted.add(message);
+		@RequestMapping(value = "/inbox", method = RequestMethod.GET)
+		public @ResponseBody ResponseEntity<List<InboxWrapper>> getAllMessagesInbox(
+				@RequestHeader("usuario") String userName) {
+			User u = userRepository.findByName(userName);
+			List<Message> list = messageRepository.findByReciver(u);
+			List<Message> listNotDeleted = new ArrayList<>();
+			// almaceno en una lista auxiliar donde trabajo con los mensajes que no
+			// fueron borrados ya que necesito los mensajes borrados para poder
+			// hacer el /trash
+			int i;
+			for (i = 0; i < list.size(); i++) {
+				if (!list.get(i).getDeleted()) {
+					Message message = list.get(i);
+					listNotDeleted.add(message);
+				}
+			}
+			if (listNotDeleted.size() > 0) {
+				return new ResponseEntity<>(this.convertListInbox(listNotDeleted), HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
 		}
-		if (listNotDeleted.size() > 0) {
-			return new ResponseEntity<>(this.convertListInbox(listNotDeleted), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}
-	}
+
 
 	// OUTBOX
 	@RequestMapping(value = "/outbox", method = RequestMethod.GET)
@@ -103,15 +103,18 @@ public class MessageController {
 
 	// BORRAR MENSAJE
 	@SuppressWarnings("rawtypes")
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity dropMessage(@PathVariable("id") int id) {
-		try {
+	@RequestMapping(value = "/{id}", method = RequestMethod.PATCH, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity dropMessage(@PathVariable("id") long id, @RequestBody BorrarMensajeRequest request) {
+		try {		
+			//System.out.println((long)id);
+			//System.out.println(request.getDeleted());
 			// modifico una variable deleted ya qae si borro el mensaje no tengo
 			// forma de traerme los mensajes borrados
-			Message message = messageRepository.findOne((long) id);
-			message.setDeleted(true);
+			Message message = messageRepository.findOne(id);			
+			message.setDeleted(request.getDeleted());			
 			// debo almacenar el mensaje guardado para poder mostrarlo en la el
 			// /trash pedido
+			//System.out.println(message.getDeleted());
 			messageRepository.save(message);
 			return new ResponseEntity(HttpStatus.OK);
 		} catch (Exception e) {
@@ -121,15 +124,14 @@ public class MessageController {
 	}
 
 	@RequestMapping(value = "/trash", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<List<InboxWrapper>> trash(@RequestHeader("usuario") String userName) {
+	public @ResponseBody ResponseEntity<List<InboxWrapper>> trash(@RequestHeader("user") String userName) {
 		User u = userRepository.findByName(userName);
-		List<Message> list = messageRepository.findByRemittent(u);
+		List<Message> list = messageRepository.findByReciver(u);
 		List<Message> listDeleted = new ArrayList<>();
 		// almaceno en una lista auxiliar donde trabajo con los mensajes que no
 		// fueron borrados ya que necesito los mensajes borrados para poder
 		// hacer el /trash
-		int i;
-		for (i = 0; i < list.size(); i++) {
+		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i).getDeleted()) {
 				Message message = list.get(i);
 				listDeleted.add(message);
@@ -142,14 +144,7 @@ public class MessageController {
 		}
 	}
 
-	@SuppressWarnings("unused")
-	private List<MessageWrapper> convertList(List<Message> message) {
-		List<MessageWrapper> list = new ArrayList<>();
-		for (Message m : message) {
-			list.add(messageConverter.convert(m));
-		}
-		return list;
-	}
+
 
 	private List<InboxWrapper> convertListInbox(List<Message> message) {
 		List<InboxWrapper> list = new ArrayList<>();

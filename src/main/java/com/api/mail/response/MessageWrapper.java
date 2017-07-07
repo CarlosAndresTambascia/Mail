@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MessageWrapper {
 	@JsonProperty("ID: ")
-	private int id;
+	private long id;
 	@JsonProperty("NombreDelRemitente: ")
 	private User remittentName;
 	@JsonProperty("NombreDelReceptor: ")
@@ -18,7 +18,7 @@ public class MessageWrapper {
 	@JsonProperty("HorMail: ")
 	private Date time;
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -37,5 +37,5 @@ public class MessageWrapper {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
+	
 }

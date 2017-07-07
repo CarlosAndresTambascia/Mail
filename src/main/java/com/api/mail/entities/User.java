@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "Users")
@@ -13,7 +14,7 @@ public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
+	private long id;
 	private String name;
 	private String surname;
 	private String adress;
@@ -40,21 +41,7 @@ public class User {
 		this.pwd = pwd;
 	}
 
-	public User(int id, String name, String surname, String adress, int phone, String city, String contry, String mail,
-			String pwd) {
-		super();
-		this.name = name;
-		this.surname = surname;
-		this.adress = adress;
-		this.phone = phone;
-		this.city = city;
-		this.contry = contry;
-		this.mail = mail;
-		this.pwd = pwd;
-		this.id = id;
-	}
 
-	@Column(nullable = false, length = 20, unique = true)
 	public String getName() {
 		return name;
 	}
@@ -111,7 +98,6 @@ public class User {
 		this.mail = mail;
 	}
 
-	@Column(nullable = false, length = 20)
 	public String getPwd() {
 		return pwd;
 	}
@@ -120,13 +106,12 @@ public class User {
 		this.pwd = pwd;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
 	public void setId(int id) {
 		this.id = id;
 	}
-
 
 }
