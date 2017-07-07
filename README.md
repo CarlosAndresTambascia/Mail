@@ -4,7 +4,6 @@ Trabajo universitario correspondiente a la materia Laboratorio V
 
 >Tests linked to Travis.io:   	[![Build Status](https://travis-ci.org/CarlosAndresTambascia/Mail.svg?branch=master)](https://travis-ci.org/CarlosAndresTambascia/Mail)
 
->Cobertura de tests: 
 
 >EndpointList Requeridas:
 
